@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://cc4lkttfar6ko"]
 
 [ext_resource type="Texture2D" uid="uid://c00cpxyqwf3ok" path="res://assets/platformerPack_character.png" id="1_5ad8b"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="1_x67wa"]
+[ext_resource type="Script" uid="uid://barg37io5ho5h" path="res://scripts/player.gd" id="1_x67wa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6djg"]
 size = Vector2(56, 74)
