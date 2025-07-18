@@ -96,7 +96,7 @@ func _physics_process(delta):
 			velocity.x = lerp(previousVelocity.x, velocity.x, .1)
 		States.DASHING:
 			velocity.y = vertical_input * DASH_SPEED_Y * -1
-			velocity.x = -1 * DASH_SPEED_X if horizontal_input < 0 else 1 * DASH_SPEED_X
+			velocity.x = -1 * DASH_SPEED_X if horizontal_input < 0 else DASH_SPEED_X
 		States.IDLE:
 			if horizontal_input != 0:
 				state = States.RUNNING
