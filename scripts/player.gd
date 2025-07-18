@@ -19,8 +19,8 @@ var input_buffer: Timer
 var coyote_timer: Timer
 var dashTimer: Timer
 var coyote_jump_available := true
-#var canControl = true
-#
+var canControl = true
+
 func _ready() -> void:
 	input_buffer = Timer.new()
 	input_buffer.wait_time = INPUT_BUFFER_PATIENCE
@@ -38,7 +38,7 @@ func _ready() -> void:
 	coyote_timer.one_shot = true
 	add_child(coyote_timer)
 	coyote_timer.timeout.connect(coyote_timeout)
-	
+		
 func coyote_timeout() -> void:
 	coyote_jump_available = false
 	
@@ -54,6 +54,8 @@ func dash_timeout() -> void:
 	
 
 func _physics_process(delta):
+	if !canControl: return
+
 	const GROUND_STATES := [States.IDLE, States.RUNNING]
 	
 	var horizontal_input = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
@@ -124,7 +126,7 @@ func set_state(newState: int) -> void:
 	
 	match state:
 		States.IDLE:
-			$AnimatedSprite2D.stop()
+			$AnimatedSprite2D.play("idle")
 			print("IDLE")
 		States.RUNNING:
 			if Input.is_action_pressed("ui_left") || Input.is_action_just_released("ui_jump"):
@@ -146,13 +148,13 @@ func set_state(newState: int) -> void:
 			print("DASHING")
 
 func death():
-	#canControl = false
+	canControl = false
 	visible = false
 	await get_tree().create_timer(1).timeout
 	reset()
 
 func win():
-	#canControl = false
+	canControl = false
 	visible = false
 	await get_tree().create_timer(1).timeout
 	reset()
@@ -160,4 +162,4 @@ func win():
 func reset():
 	await get_tree().reload_current_scene()
 	visible = true
-	#canControl = true
+	canControl = true
