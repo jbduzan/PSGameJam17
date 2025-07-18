@@ -1,8 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://cc4lkttfar6ko"]
+[gd_scene load_steps=13 format=3 uid="uid://cc4lkttfar6ko"]
 
 [ext_resource type="Script" uid="uid://barg37io5ho5h" path="res://scripts/player.gd" id="1_x67wa"]
 [ext_resource type="Texture2D" uid="uid://conqjs4n4e4ww" path="res://assets/Jump.png" id="2_qhqgy"]
 [ext_resource type="Texture2D" uid="uid://cqn40xo2rke5k" path="res://assets/Run.png" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://bvv0ms4ixrxud" path="res://scenes/abilities_bar.gd" id="11_3v2ag"]
+[ext_resource type="PackedScene" uid="uid://cn2orkxyjihvr" path="res://ui/ability_box.tscn" id="11_d2wvv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qhqgy"]
 radius = 18.0
@@ -61,8 +63,9 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("abilities")]
 script = ExtResource("1_x67wa")
+abilities = NodePath("UI/abilitiesBar")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_qhqgy")
@@ -77,3 +80,46 @@ animation = &"run"
 limit_left = 0
 limit_bottom = 600
 position_smoothing_enabled = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="abilitiesBar" type="HBoxContainer" parent="UI"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -268.0
+offset_right = 268.0
+offset_bottom = 80.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+script = ExtResource("11_3v2ag")
+
+[node name="AbilityBox" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox2" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox3" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox4" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox5" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox6" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox7" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox8" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox9" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2
+
+[node name="AbilityBox10" parent="UI/abilitiesBar" instance=ExtResource("11_d2wvv")]
+layout_mode = 2

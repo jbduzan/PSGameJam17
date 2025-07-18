@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+@export var abilities: HBoxContainer
+
 const SPEED = 350.0 # Base horizontal movement speed
 const GRAVITY = 2000.0 # Gravity when moving upwards
 const JUMP_VELOCITY = -900.0 # Maximum jump strength
@@ -83,6 +85,7 @@ func _physics_process(delta):
 					state = States.JUMPING
 		States.JUMPING:
 			if coyote_jump_available:
+				abilities.use("jump")
 				velocity.y = JUMP_VELOCITY
 				coyote_jump_available = false
 				
@@ -97,6 +100,7 @@ func _physics_process(delta):
 			velocity.x = horizontal_input * SPEED
 			velocity.x = lerp(previousVelocity.x, velocity.x, .1)
 		States.DASHING:
+			abilities.use("dash")
 			velocity.y = vertical_input * DASH_SPEED_Y * -1
 			velocity.x = -1 * DASH_SPEED_X if horizontal_input < 0 else DASH_SPEED_X
 		States.IDLE:
@@ -120,6 +124,7 @@ func _physics_process(delta):
 func set_state(newState: int) -> void:
 	previousState = state
 	state = newState
+	var canUse = true
 	
 	if previousState == States.DASHING:
 		currentGravity = GRAVITY
@@ -138,14 +143,23 @@ func set_state(newState: int) -> void:
 			$AnimatedSprite2D.play("run")
 			print("RUNNING")
 		States.JUMPING:
-			$AnimatedSprite2D.play("jump")
-			print("JUMPING")
+			canUse = abilities.can("jump")
+			
+			if canUse:
+				$AnimatedSprite2D.play("jump")
+				print("JUMPING")
 		States.FALLING:
 			print("FALLING")
 		States.DASHING:
-			currentGravity = 0
-			dashTimer.start()
-			print("DASHING")
+			canUse = abilities.can("dash")
+			
+			if canUse:
+				currentGravity = 0
+				dashTimer.start()
+				print("DASHING")
+			
+	if not canUse:
+		state = previousState
 
 func death():
 	canControl = false
