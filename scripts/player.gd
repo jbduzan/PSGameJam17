@@ -9,7 +9,6 @@ const DASH_SPEED_X = 900
 const DASH_SPEED_Y = 350
 
 enum States {IDLE, RUNNING, JUMPING, FALLING, DASHING}
-enum Abilities {Jump}
 
 var state: States = States.IDLE: set = set_state
 var previousState: States = States.IDLE
@@ -56,7 +55,7 @@ func dash_timeout() -> void:
 
 func _physics_process(delta):
 	if !canControl: return
-	
+
 	const GROUND_STATES := [States.IDLE, States.RUNNING]
 	
 	var horizontal_input = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
