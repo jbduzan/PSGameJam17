@@ -14,15 +14,18 @@ func getLevel(path):
 		var files = dir.get_files()
 		files.sort()
 		
-		for fileName in files:
-			while fileName != "":
-				print(fileName)
-				createLvlButton('%s/%s' % [dir.get_current_dir(), fileName], fileName)
-				fileName = dir.get_next()
+		for i in files.size():
+			var fileName = files[i]
+			
+			if not fileName: break
+			
+			createLvlButton('%s/%s' % [dir.get_current_dir(), fileName], i + 1)
+			fileName = dir.get_next()
 	
-func createLvlButton(lvlPath, lvlName):
+func createLvlButton(lvlPath, lvlNumber):
 	var btn = levelBtn.instantiate()
-	btn.textLabel = lvlName.trim_suffix(".tscn").replace("_", " ")
+	var name = "0" + str(lvlNumber) if lvlNumber < 10 else lvlNumber
+	btn.textLabel = name
 	btn.levelPath = lvlPath
 	btn.locked = false
 	grid.add_child(btn)
