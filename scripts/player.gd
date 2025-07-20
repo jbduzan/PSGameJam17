@@ -3,13 +3,13 @@ extends CharacterBody2D
 var abilities: AbilitiesBar
 @export var abilitySlots = 0
 
-const SPEED = 350.0 # Base horizontal movement speed
+const SPEED = 20000.0 # Base horizontal movement speed
 const GRAVITY = 2000.0 # Gravity when moving upwards
-const JUMP_VELOCITY = -900.0 # Maximum jump strength
+const JUMP_VELOCITY = -50000.0 # Maximum jump strength
 const INPUT_BUFFER_PATIENCE = 0.1 # Input queue patience time
 const COYOTE_TIME = 0.08 # Coyote patience time
-const DASH_SPEED_X = 900
-const DASH_SPEED_Y = 350
+const DASH_SPEED_X = 70000
+const DASH_SPEED_Y = 35000
 
 enum States {IDLE, RUNNING, JUMPING, FALLING, DASHING, GLIDING}
 
@@ -78,7 +78,7 @@ func _physics_process(delta):
 			if horizontal_input == 0:
 				state = States.IDLE
 			else:
-				velocity.x = horizontal_input * SPEED
+				velocity.x = horizontal_input * SPEED * delta
 				coyote_jump_available = true
 				coyote_timer.stop()
 				
@@ -87,7 +87,7 @@ func _physics_process(delta):
 		States.JUMPING:
 			if coyote_jump_available:
 				abilities.use("jump")
-				velocity.y = JUMP_VELOCITY
+				velocity.y = JUMP_VELOCITY * delta
 				coyote_jump_available = false
 				
 			state = States.FALLING
@@ -101,19 +101,19 @@ func _physics_process(delta):
 			if Input.is_action_pressed("ui_jump") and velocity.y >= 0:
 				state = States.GLIDING
 			else:
-				velocity.x = horizontal_input * SPEED
+				velocity.x = horizontal_input * SPEED * delta
 				velocity.x = lerp(previousVelocity.x, velocity.x, .1)
 		States.DASHING:
 			abilities.use("dash")
-			velocity.y = vertical_input * DASH_SPEED_Y * -1
-			velocity.x = -1 * DASH_SPEED_X if horizontal_input < 0 else DASH_SPEED_X
+			velocity.y = vertical_input * DASH_SPEED_Y * -1 * delta
+			velocity.x = -1 * DASH_SPEED_X * delta if horizontal_input < 0 else DASH_SPEED_X * delta
 		States.GLIDING:
 			abilities.use("glide")
 			if Input.is_action_just_released("ui_jump"):
 				state = States.FALLING
 			else:
 				currentGravity *= 0.5
-				velocity.x = horizontal_input * SPEED * 0.5
+				velocity.x = horizontal_input * SPEED * 0.5 * delta
 		States.IDLE:
 			if horizontal_input != 0:
 				state = States.RUNNING
