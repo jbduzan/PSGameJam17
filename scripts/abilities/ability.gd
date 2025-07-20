@@ -5,6 +5,7 @@ var abilityName: String
 var isAvailable: bool
 var iconPath: Texture2D
 var target: Button
+var shortcut: String
 
 func _init(target: Button):
 	isAvailable = true

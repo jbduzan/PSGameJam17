@@ -1,9 +1,9 @@
 extends Ability
-class_name Jump
+class_name Glide
 
 func _init(target) -> void:
-	abilityName = "jump"
+	abilityName = "glide"
 	iconPath = preload("res://assets/Jumpico.png")
-	shortcut = "space"
+	shortcut = "hold space"
 	
 	super._init(target)

@@ -11,7 +11,7 @@ const COYOTE_TIME = 0.08 # Coyote patience time
 const DASH_SPEED_X = 900
 const DASH_SPEED_Y = 350
 
-enum States {IDLE, RUNNING, JUMPING, FALLING, DASHING}
+enum States {IDLE, RUNNING, JUMPING, FALLING, DASHING, GLIDING}
 
 var state: States = States.IDLE: set = set_state
 var previousState: States = States.IDLE
@@ -98,12 +98,22 @@ func _physics_process(delta):
 			if Input.is_action_just_released("ui_jump") and velocity.y < 0:
 				velocity.y *= 0.3				
 			
-			velocity.x = horizontal_input * SPEED
-			velocity.x = lerp(previousVelocity.x, velocity.x, .1)
+			if Input.is_action_pressed("ui_jump") and velocity.y >= 0:
+				state = States.GLIDING
+			else:
+				velocity.x = horizontal_input * SPEED
+				velocity.x = lerp(previousVelocity.x, velocity.x, .1)
 		States.DASHING:
 			abilities.use("dash")
 			velocity.y = vertical_input * DASH_SPEED_Y * -1
 			velocity.x = -1 * DASH_SPEED_X if horizontal_input < 0 else DASH_SPEED_X
+		States.GLIDING:
+			abilities.use("glide")
+			if Input.is_action_just_released("ui_jump"):
+				state = States.FALLING
+			else:
+				currentGravity *= 0.5
+				velocity.x = horizontal_input * SPEED * 0.5
 		States.IDLE:
 			if horizontal_input != 0:
 				state = States.RUNNING
@@ -127,7 +137,7 @@ func set_state(newState: int) -> void:
 	state = newState
 	var canUse = true
 	
-	if previousState == States.DASHING:
+	if previousState in [States.DASHING, States.GLIDING]:
 		currentGravity = GRAVITY
 	
 	match state:
@@ -158,6 +168,9 @@ func set_state(newState: int) -> void:
 				currentGravity = 0
 				dashTimer.start()
 				print("DASHING")
+		States.GLIDING:
+			canUse = abilities.can("glide")
+			print("GLIDING")
 			
 	if not canUse:
 		state = previousState
