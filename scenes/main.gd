@@ -1,6 +1,6 @@
 extends Control
 
-const levelBtn = preload("res://scenes/levelBox.tscn")
+const levelBtn = preload("res://ui/levelBox.tscn")
 @export_dir var dirPath
 @onready var grid = $MarginContainer/VBoxContainer/GridContainer
 

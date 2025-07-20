@@ -1,14 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://cn2orkxyjihvr"]
+[gd_scene load_steps=2 format=3 uid="uid://cn2orkxyjihvr"]
 
-[ext_resource type="Texture2D" uid="uid://cf6pgybnr3x61" path="res://icon.svg" id="1_4haiv"]
 [ext_resource type="Script" uid="uid://dmhu8ifknat2q" path="res://ui/ability_box.gd" id="2_r0we0"]
 
-[node name="AbilityBox" type="TextureRect"]
+[node name="AbilityBox" type="Button"]
 custom_minimum_size = Vector2(64, 64)
 offset_right = 128.0
 offset_bottom = 128.0
-texture = ExtResource("1_4haiv")
-expand_mode = 1
 script = ExtResource("2_r0we0")
 
 [node name="bg" type="TextureRect" parent="."]
@@ -16,3 +13,5 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

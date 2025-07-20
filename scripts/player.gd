@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-@export var abilities: HBoxContainer
+var abilities: AbilitiesBar
 @export var abilitySlots = 0
 
 const SPEED = 350.0 # Base horizontal movement speed

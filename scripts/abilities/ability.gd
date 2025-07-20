@@ -4,11 +4,19 @@ class_name Ability
 var abilityName: String
 var isAvailable: bool
 var iconPath: Texture2D
+var target: Button
 
-func _init(target):
+func _init(target: Button):
 	isAvailable = true
-	target.texture = iconPath
+	target.icon = iconPath
 
-func use(target):
+func use(target: Button):
 	isAvailable = false
-	target.texture = preload("res://icon.svg")
+	target.icon = preload("res://icon.svg")
+
+func clone(newTarget: Button):
+	var newAbility = Ability.new(newTarget)
+	newAbility.isAvailable = isAvailable
+	newAbility.iconPath = iconPath
+	newAbility.abilityName = abilityName
+	return newAbility
