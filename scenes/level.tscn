@@ -1093,13 +1093,13 @@ shape = SubResource("RectangleShape2D_nn16p")
 position = Vector2(1217, 479)
 shape = SubResource("RectangleShape2D_gn4fi")
 
-[node name="BackButton" parent="." instance=ExtResource("5_qogh7")]
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="BackButton" parent="UI" instance=ExtResource("5_qogh7")]
 offset_left = 171.0
 offset_top = 22.0
 offset_right = 221.0
 offset_bottom = 53.0
-
-[node name="UI" type="CanvasLayer" parent="."]
 
 [node name="abilitiesBar" type="HBoxContainer" parent="UI"]
 anchors_preset = 5

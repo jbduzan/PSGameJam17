@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://braodvc75gig5"]
+[gd_scene load_steps=4 format=3 uid="uid://braodvc75gig5"]
 
 [ext_resource type="PackedScene" uid="uid://hdpum82eq2k2" path="res://scenes/level.tscn" id="1_ksju7"]
+[ext_resource type="Script" uid="uid://cnd3gqyxdtcm5" path="res://scripts/abilities/dash.gd" id="3_nsrm0"]
+[ext_resource type="Script" uid="uid://ct3g3meibcvif" path="res://scripts/abilities/jump.gd" id="8_qxy0u"]
 
 [node name="level_1" instance=ExtResource("1_ksju7")]
 
@@ -12,3 +14,5 @@ offset_left = 100.0
 offset_top = 12.0
 offset_right = 1100.0
 offset_bottom = 612.0
+NbrAbilitiesAllowed = 2
+AbilitiesAllowed = [ExtResource("8_qxy0u"), ExtResource("3_nsrm0")]
