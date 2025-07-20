@@ -6,6 +6,8 @@
 custom_minimum_size = Vector2(64, 64)
 offset_right = 128.0
 offset_bottom = 128.0
+icon_alignment = 1
+vertical_icon_alignment = 0
 script = ExtResource("2_r0we0")
 
 [node name="bg" type="TextureRect" parent="."]
