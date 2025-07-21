@@ -4,6 +4,7 @@ var abilities: AbilitiesBar
 @export var abilitySlots = 0
 
 @onready var label = $Label
+@onready var wallCollider = $WallCollider
 
 const SPEED = 20000.0 # Base horizontal movement speed
 const GRAVITY = 2000.0 # Gravity when moving upwards
@@ -20,6 +21,7 @@ var state: States = States.IDLE: set = set_state
 var previousState: States = States.IDLE
 var previousVelocity: Vector2
 var currentGravity = GRAVITY
+var direction: int = 1
 
 var input_buffer: Timer
 var coyote_timer: Timer
@@ -59,10 +61,13 @@ func dash_timeout() -> void:
 		state = States.IDLE
 	
 
+func is_near_wall():
+	return wallCollider.is_colliding()
+
 func _physics_process(delta):
 	if !canControl: return
 
-	const GROUND_STATES := [States.IDLE, States.RUNNING, States.WALLSLIDING]
+	const GROUND_STATES := [States.IDLE, States.RUNNING]
 	
 	var horizontal_input = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	var vertical_input = Input.get_action_strength("ui_up")
@@ -81,6 +86,12 @@ func _physics_process(delta):
 			if horizontal_input == 0:
 				state = States.IDLE
 			else:
+				if Input.is_action_pressed("ui_left"):
+					$AnimatedSprite2D.flip_h = true
+			
+				if Input.is_action_pressed("ui_right"):
+					$AnimatedSprite2D.flip_h = false
+				
 				velocity.x = horizontal_input * SPEED * delta
 				coyote_jump_available = true
 				coyote_timer.stop()
@@ -88,10 +99,10 @@ func _physics_process(delta):
 			if input_buffer.time_left > 0:
 				state = States.JUMPING
 		States.JUMPING:
-			if coyote_jump_available or is_on_wall():
+			if coyote_jump_available or is_near_wall():
 				velocity.y = JUMP_VELOCITY * delta
 				
-				if is_on_wall():
+				if is_near_wall():
 					velocity.x = previousVelocity.x * -1
 				
 				coyote_jump_available = false
@@ -99,10 +110,15 @@ func _physics_process(delta):
 			state = States.FALLING
 		States.FALLING:
 			velocity.x = horizontal_input * SPEED * delta
+			if Input.is_action_pressed("ui_left"):
+				$AnimatedSprite2D.flip_h = true
+		
+			if Input.is_action_pressed("ui_right"):
+				$AnimatedSprite2D.flip_h = false
 			
 			if is_on_floor():
 				state = States.IDLE
-			elif is_on_wall():
+			elif is_near_wall():
 				state = States.WALLSLIDING
 			else:
 				if Input.is_action_just_released("ui_jump") and velocity.y < 0:
@@ -122,15 +138,25 @@ func _physics_process(delta):
 				currentGravity *= 0.5
 				velocity.x = horizontal_input * SPEED * 0.5 * delta
 		States.WALLSLIDING:
-			if is_on_floor() or not is_on_wall():
+			if is_on_floor() or not is_near_wall():
 				state = States.FALLING
 			else:
 				velocity.y = 0
-				velocity.x = horizontal_input * SPEED * delta
 				currentGravity = WALLSLIDE_GRAVITY
 				
-				if input_buffer.time_left > 0:
-					state = States.JUMPING
+				if Input.is_action_pressed("ui_jump") and (Input.is_action_pressed("ui_left") or Input.is_action_pressed("ui_right")):
+					state = States.WALLBOUNCING
+		States.WALLBOUNCING:
+			currentGravity = GRAVITY
+			
+			if Input.is_action_pressed("ui_left") and direction == 1:
+				velocity.x = 450 * -1 * delta
+				velocity.y = JUMP_VELOCITY * .7 * delta
+			elif Input.is_action_pressed("ui_right") and direction == -1:
+				velocity.x = 450 * delta
+				velocity.y = JUMP_VELOCITY * .7 * delta
+				
+			state = States.FALLING
 		States.IDLE:
 			if horizontal_input != 0:
 				state = States.RUNNING
@@ -147,6 +173,9 @@ func _physics_process(delta):
 	# TODO MAX GRAVITY
 	previousVelocity = velocity
 	
+	direction = 1 if not $AnimatedSprite2D.flip_h else -1
+	wallCollider.rotation_degrees = 90 * -direction
+
 	move_and_slide()
 
 func set_state(newState: int) -> void:
@@ -162,24 +191,18 @@ func set_state(newState: int) -> void:
 			$AnimatedSprite2D.play("idle")
 			print("IDLE")
 		States.RUNNING:
-			if Input.is_action_pressed("ui_left") || Input.is_action_just_released("ui_jump"):
-				$AnimatedSprite2D.flip_h = true
-			
-			if Input.is_action_pressed("ui_right") || Input.is_action_just_released("ui_jump"):
-				$AnimatedSprite2D.flip_h = false
-			
 			$AnimatedSprite2D.play("run")
 			print("RUNNING")
 		States.JUMPING:
 			if is_on_floor():
 				canUse = abilities.can("jump")
-			elif is_on_wall():
+			elif is_near_wall():
 				canUse = abilities.can("wallBounce")
 
 			if canUse:
 				if is_on_floor():
 					abilities.use("juzejzemp")
-				elif is_on_wall():
+				elif is_near_wall():
 					abilities.use("wallBzaezaounce")
 					
 				$AnimatedSprite2D.play("jump")
@@ -203,6 +226,8 @@ func set_state(newState: int) -> void:
 				print("GLIDING")
 		States.WALLSLIDING:
 			print("WALLSLIDING")
+		States.WALLBOUNCING:
+			print("WALLBOUNCING")
 			
 	if not canUse:
 		state = previousState
