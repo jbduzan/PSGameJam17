@@ -5,12 +5,13 @@ var abilities: AbilitiesBar
 
 @onready var label = $Label
 @onready var wallCollider = $WallCollider
+@onready var coyoteTimer = $CoyoteTimer
 
 const SPEED = 20000.0 # Base horizontal movement speed
 const GRAVITY = 2000.0 # Gravity when moving upwards
 const JUMP_VELOCITY = -50000.0 # Maximum jump strength
 const INPUT_BUFFER_PATIENCE = .1 # Input queue patience time
-const COYOTE_TIME = 0.08 # Coyote patience time
+const COYOTE_TIME = 0.2 # Coyote patience time
 const DASH_SPEED_X = 70000
 const DASH_SPEED_Y = 35000
 const WALLSLIDE_GRAVITY = 5000
@@ -22,11 +23,10 @@ var previousState: States = States.IDLE
 var previousVelocity: Vector2
 var currentGravity = GRAVITY
 var direction: int = 1
+var wasOnFloor: bool = false
 
 var input_buffer: Timer
-var coyote_timer: Timer
 var dashTimer: Timer
-var coyote_jump_available := true
 var canControl = true
 
 func _ready() -> void:
@@ -40,16 +40,7 @@ func _ready() -> void:
 	dashTimer.one_shot = true
 	dashTimer.timeout.connect(dash_timeout)
 	add_child(dashTimer)
-
-	coyote_timer = Timer.new()
-	coyote_timer.wait_time = .1
-	coyote_timer.one_shot = true
-	coyote_timer.timeout.connect(coyote_timeout)
-	add_child(coyote_timer)
-		
-func coyote_timeout() -> void:
-	coyote_jump_available = false
-	
+				
 func dash_timeout() -> void:
 	var horizontal_input = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	
@@ -72,15 +63,18 @@ func _physics_process(delta):
 	var horizontal_input = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	var vertical_input = Input.get_action_strength("ui_up")
 	
+	if wasOnFloor and not is_on_floor():
+		state = States.FALLING
+	
 	if Input.is_action_just_pressed("ui_jump"):
-		if state in GROUND_STATES:
+		if state in GROUND_STATES or (state == States.FALLING and coyoteTimer.time_left > 0):
 			state = States.JUMPING
 		else:
 			input_buffer.start()
 	
 	if Input.is_action_just_pressed("ui_dash") and horizontal_input != 0:
 		state = States.DASHING
-	# TODO: FIX COYOTE TIME TIMER
+
 	match state:
 		States.RUNNING:
 			if horizontal_input == 0:
@@ -93,20 +87,12 @@ func _physics_process(delta):
 					$AnimatedSprite2D.flip_h = false
 				
 				velocity.x = horizontal_input * SPEED * delta
-				coyote_jump_available = true
-				coyote_timer.stop()
+				coyoteTimer.stop()
 			
 			if input_buffer.time_left > 0:
 				state = States.JUMPING
 		States.JUMPING:
-			if coyote_jump_available or is_near_wall():
-				velocity.y = JUMP_VELOCITY * delta
-				
-				if is_near_wall():
-					velocity.x = previousVelocity.x * -1
-				
-				coyote_jump_available = false
-					
+			velocity.y = JUMP_VELOCITY * delta
 			state = States.FALLING
 		States.FALLING:
 			velocity.x = horizontal_input * SPEED * delta
@@ -152,9 +138,11 @@ func _physics_process(delta):
 			if Input.is_action_pressed("ui_left") and direction == 1:
 				velocity.x = 450 * -1 * delta
 				velocity.y = JUMP_VELOCITY * .7 * delta
+				abilities.use("wallBounce")
 			elif Input.is_action_pressed("ui_right") and direction == -1:
 				velocity.x = 450 * delta
 				velocity.y = JUMP_VELOCITY * .7 * delta
+				abilities.use("wallBounce")
 				
 			state = States.FALLING
 		States.IDLE:
@@ -162,8 +150,7 @@ func _physics_process(delta):
 				state = States.RUNNING
 			else:
 				velocity.x = 0
-				coyote_jump_available = true
-				coyote_timer.stop()
+				coyoteTimer.stop()
 				
 			if input_buffer.time_left > 0:
 					state = States.JUMPING
@@ -175,6 +162,7 @@ func _physics_process(delta):
 	
 	direction = 1 if not $AnimatedSprite2D.flip_h else -1
 	wallCollider.rotation_degrees = 90 * -direction
+	wasOnFloor = is_on_floor()
 
 	move_and_slide()
 
@@ -194,21 +182,15 @@ func set_state(newState: int) -> void:
 			$AnimatedSprite2D.play("run")
 			print("RUNNING")
 		States.JUMPING:
-			if is_on_floor():
+			if is_on_floor() or coyoteTimer.time_left > 0:
 				canUse = abilities.can("jump")
-			elif is_near_wall():
-				canUse = abilities.can("wallBounce")
 
 			if canUse:
-				if is_on_floor():
-					abilities.use("juzejzemp")
-				elif is_near_wall():
-					abilities.use("wallBzaezaounce")
-					
+				abilities.use("juzejzemp")
 				$AnimatedSprite2D.play("jump")
 				print("JUMPING")
 		States.FALLING:
-			coyote_timer.start()
+			coyoteTimer.start(COYOTE_TIME)
 			print("FALLING")
 		States.DASHING:
 			canUse = abilities.can("dash")
@@ -227,7 +209,10 @@ func set_state(newState: int) -> void:
 		States.WALLSLIDING:
 			print("WALLSLIDING")
 		States.WALLBOUNCING:
-			print("WALLBOUNCING")
+			canUse = abilities.can("wallBounce")
+			
+			if canUse:
+				print("WALLBOUNCING")
 			
 	if not canUse:
 		state = previousState

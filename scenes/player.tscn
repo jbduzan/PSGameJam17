@@ -87,3 +87,7 @@ offset_bottom = -52.0
 [node name="WallCollider" type="RayCast2D" parent="."]
 rotation = -1.5708
 target_position = Vector2(-1.22392e-06, 28)
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+one_shot = true
+autostart = true
