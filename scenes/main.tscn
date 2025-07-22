@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c1t4qpsexq55o" path="res://scenes/main.gd" id="1_o5qli"]
 
-[node name="Main" type="Control"]
+[node name="Main" type="Control" groups=["Persist"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -25,7 +25,13 @@ func getLevel(path):
 func createLvlButton(lvlPath, lvlNumber):
 	var btn = levelBtn.instantiate()
 	var name = "0" + str(lvlNumber) if lvlNumber < 10 else lvlNumber
+	
+	var savePath = "user://levelCleared.ini"
+	var configFile = ConfigFile.new()
+	configFile.load(savePath)
+	var lastLevelCompleted = configFile.get_value("level", "last", 0)
+	
 	btn.textLabel = name
 	btn.levelPath = lvlPath
-	btn.locked = false
+	btn.locked = lvlNumber > lastLevelCompleted + 1
 	grid.add_child(btn)

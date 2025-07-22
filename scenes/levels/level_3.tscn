@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://cnn18cxhlckd6"]
+
+[ext_resource type="PackedScene" uid="uid://hdpum82eq2k2" path="res://scenes/level.tscn" id="1_0ljxa"]
+[ext_resource type="Script" uid="uid://ct3g3meibcvif" path="res://scripts/abilities/jump.gd" id="2_0qepi"]
+[ext_resource type="Script" uid="uid://cnd3gqyxdtcm5" path="res://scripts/abilities/dash.gd" id="3_fmg3e"]
+
+[node name="level" instance=ExtResource("1_0ljxa")]
+
+[node name="Spawn" parent="." index="0"]
+position = Vector2(78, 535)
+
+[node name="Win" parent="Level" index="2"]
+position = Vector2(1242, 478)
+
+[node name="AbilitySelector" parent="UI" index="2"]
+NbrAbilitiesAllowed = 2
+AbilitiesAllowed = [ExtResource("2_0qepi"), ExtResource("3_fmg3e")]

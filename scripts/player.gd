@@ -247,12 +247,22 @@ func win():
 	await get_tree().create_timer(.5).timeout
 	
 	var currentSceneFile = get_tree().current_scene.scene_file_path
-	var nextLvlNumber = currentSceneFile.to_int() + 1
+	var currentLevelNumber = currentSceneFile.to_int()
+	var nextLvlNumber = currentLevelNumber + 1
 	var nextLvlPath = "res://scenes/levels/level_" + str(nextLvlNumber) + ".tscn"
 	
 	var dir = DirAccess.open("res://scenes/levels")
 	if dir and dir.file_exists(nextLvlPath):
 		get_tree().change_scene_to_file(nextLvlPath)
+		
+		var savePath = "user://levelCleared.ini"
+		var configFile = ConfigFile.new()
+		configFile.load(savePath)
+		var lastLevelCompleted = configFile.get_value("level", "last", 0)
+		
+		if currentLevelNumber > lastLevelCompleted:
+			configFile.set_value("level", "last", currentLevelNumber)
+			configFile.save(savePath)
 	else:
 		get_tree().change_scene_to_file("res://scenes/main.tscn")
 
