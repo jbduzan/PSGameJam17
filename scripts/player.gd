@@ -186,7 +186,7 @@ func set_state(newState: int) -> void:
 				canUse = abilities.can("jump")
 
 			if canUse:
-				abilities.use("juzejzemp")
+				abilities.use("jump")
 				$AnimatedSprite2D.play("jump")
 				print("JUMPING")
 		States.FALLING:
@@ -228,8 +228,17 @@ func death():
 func win():
 	canControl = false
 	visible = false
-	await get_tree().create_timer(1).timeout
-	reset()
+	await get_tree().create_timer(.5).timeout
+	
+	var currentSceneFile = get_tree().current_scene.scene_file_path
+	var nextLvlNumber = currentSceneFile.to_int() + 1
+	var nextLvlPath = "res://scenes/levels/level_" + str(nextLvlNumber) + ".tscn"
+	
+	var dir = DirAccess.open("res://scenes/levels")
+	if dir and dir.file_exists(nextLvlPath):
+		get_tree().change_scene_to_file(nextLvlPath)
+	else:
+		get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func reset():
 	await get_tree().reload_current_scene()

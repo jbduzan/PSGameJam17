@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://hdpum82eq2k2"]
+[gd_scene load_steps=12 format=3 uid="uid://hdpum82eq2k2"]
 
 [ext_resource type="Script" uid="uid://dev2os4uuknks" path="res://scenes/level.gd" id="1_377w7"]
 [ext_resource type="Texture2D" uid="uid://b7e6b1qil5s26" path="res://assets/platformPack_tilesheet.png" id="2_rmjfq"]
@@ -1066,9 +1066,6 @@ sources/0 = SubResource("TileSetAtlasSource_jyhfs")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nn16p"]
 size = Vector2(1277, 20)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_gn4fi"]
-size = Vector2(66, 150)
-
 [node name="level" type="Node2D"]
 script = ExtResource("1_377w7")
 metadata/_edit_vertical_guides_ = [-1.0, 0.0]
@@ -1088,10 +1085,6 @@ position = Vector2(641.5, 635)
 shape = SubResource("RectangleShape2D_nn16p")
 
 [node name="Win" parent="Level" instance=ExtResource("4_xfk5q")]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Win"]
-position = Vector2(1217, 479)
-shape = SubResource("RectangleShape2D_gn4fi")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

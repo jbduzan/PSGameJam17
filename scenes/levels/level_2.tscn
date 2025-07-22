@@ -6,6 +6,12 @@
 
 [node name="level" instance=ExtResource("1_j2425")]
 
+[node name="Spawn" parent="." index="0"]
+position = Vector2(78, 535)
+
+[node name="Win" parent="Level" index="2"]
+position = Vector2(1242, 478)
+
 [node name="AbilitySelector" parent="UI" index="2"]
 NbrAbilitiesAllowed = 2
 AbilitiesAllowed = [ExtResource("2_ra442"), ExtResource("3_fiq81")]
