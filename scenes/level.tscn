@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://hdpum82eq2k2"]
+[gd_scene load_steps=14 format=3 uid="uid://hdpum82eq2k2"]
 
 [ext_resource type="Script" uid="uid://dev2os4uuknks" path="res://scenes/level.gd" id="1_377w7"]
 [ext_resource type="Texture2D" uid="uid://b7e6b1qil5s26" path="res://assets/platformPack_tilesheet.png" id="2_rmjfq"]
 [ext_resource type="PackedScene" uid="uid://hcchsw6chhov" path="res://scenes/death.tscn" id="3_7pb6i"]
+[ext_resource type="Texture2D" uid="uid://ciqnoibhintrs" path="res://assets/GroundBasic.png" id="3_8c41q"]
 [ext_resource type="PackedScene" uid="uid://bqwvt5tvdsll7" path="res://scenes/Win.tscn" id="4_xfk5q"]
 [ext_resource type="PackedScene" uid="uid://dppk3pv78rr5p" path="res://ui/backButton.tscn" id="5_qogh7"]
 [ext_resource type="Script" uid="uid://bvv0ms4ixrxud" path="res://ui/abilities_bar.gd" id="6_8iyoh"]
@@ -1059,9 +1060,29 @@ texture = ExtResource("2_rmjfq")
 54:27/0 = 0
 55:27/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_olg7q"]
+texture = ExtResource("3_8c41q")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_hauv6"]
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_jyhfs")
+sources/1 = SubResource("TileSetAtlasSource_olg7q")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nn16p"]
 size = Vector2(1277, 20)

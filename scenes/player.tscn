@@ -91,3 +91,5 @@ target_position = Vector2(-1.22392e-06, 28)
 [node name="CoyoteTimer" type="Timer" parent="."]
 one_shot = true
 autostart = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]

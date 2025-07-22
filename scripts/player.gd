@@ -6,6 +6,7 @@ var abilities: AbilitiesBar
 @onready var label = $Label
 @onready var wallCollider = $WallCollider
 @onready var coyoteTimer = $CoyoteTimer
+@onready var audioPlayer = $AudioStreamPlayer2D
 
 const SPEED = 20000.0 # Base horizontal movement speed
 const GRAVITY = 2000.0 # Gravity when moving upwards
@@ -203,6 +204,9 @@ func set_state(newState: int) -> void:
 
 			if canUse:
 				abilities.use("jump")
+				var jumpSound = preload("res://assets/sounds/30_Jump_03.wav")
+				audioPlayer.stream = jumpSound
+				audioPlayer.play()
 				$AnimatedSprite2D.play("jump")
 				print("JUMPING")
 		States.FALLING:
