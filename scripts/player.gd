@@ -22,11 +22,13 @@ var state: States = States.IDLE: set = set_state
 var previousState: States = States.IDLE
 var previousVelocity: Vector2
 var currentGravity = GRAVITY
+var currentSpeed = SPEED
 var direction: int = 1
 var wasOnFloor: bool = false
 
 var input_buffer: Timer
 var dashTimer: Timer
+var hyperspeedTimer: Timer
 var canControl = true
 
 func _ready() -> void:
@@ -40,7 +42,16 @@ func _ready() -> void:
 	dashTimer.one_shot = true
 	dashTimer.timeout.connect(dash_timeout)
 	add_child(dashTimer)
+	
+	hyperspeedTimer = Timer.new()
+	hyperspeedTimer.wait_time = 1.5
+	hyperspeedTimer.one_shot = true
+	hyperspeedTimer.timeout.connect(hyperspeed_timeout)
+	add_child(hyperspeedTimer)
 				
+func hyperspeed_timeout():
+	currentSpeed = SPEED			
+			
 func dash_timeout() -> void:
 	var horizontal_input = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	
@@ -71,6 +82,11 @@ func _physics_process(delta):
 			state = States.JUMPING
 		else:
 			input_buffer.start()
+			
+	if Input.is_action_just_pressed("ui_hyperspeed") and abilities.can("hyperspeed"):
+		abilities.use("hyperspeed")
+		currentSpeed = SPEED * 3
+		hyperspeedTimer.start()
 	
 	if Input.is_action_just_pressed("ui_dash") and horizontal_input != 0:
 		state = States.DASHING
@@ -86,7 +102,7 @@ func _physics_process(delta):
 				if Input.is_action_pressed("ui_right"):
 					$AnimatedSprite2D.flip_h = false
 				
-				velocity.x = horizontal_input * SPEED * delta
+				velocity.x = horizontal_input * currentSpeed * delta
 				coyoteTimer.stop()
 			
 			if input_buffer.time_left > 0:
@@ -95,7 +111,7 @@ func _physics_process(delta):
 			velocity.y = JUMP_VELOCITY * delta
 			state = States.FALLING
 		States.FALLING:
-			velocity.x = horizontal_input * SPEED * delta
+			velocity.x = horizontal_input * currentSpeed * delta
 			if Input.is_action_pressed("ui_left"):
 				$AnimatedSprite2D.flip_h = true
 		
@@ -122,7 +138,7 @@ func _physics_process(delta):
 				state = States.FALLING
 			else:
 				currentGravity *= 0.5
-				velocity.x = horizontal_input * SPEED * 0.5 * delta
+				velocity.x = horizontal_input * currentSpeed * 0.5 * delta
 		States.WALLSLIDING:
 			if is_on_floor() or not is_near_wall():
 				state = States.FALLING
