@@ -1024,7 +1024,7 @@ position = Vector2(78, 535)
 tile_set = SubResource("TileSet_8qukl")
 
 [node name="Win" parent="Level" index="2"]
-position = Vector2(1242, 478)
+position = Vector2(87, 520)
 
 [node name="AbilitySelector" parent="UI" index="2"]
 NbrAbilitiesAllowed = 2
